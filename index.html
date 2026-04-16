@@ -1,7 +1,3 @@
-https://github.com/sim12345678912/sim-inventory
-
-https://docs.google.com/spreadsheets/d/1QsQ19xSbsMXjcSa7hzItjOiQnwEoVtwpP3oPfcAp3MM/edit?hl=zh-tw&gid=0#gid=0
- 
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -262,54 +258,3 @@ https://docs.google.com/spreadsheets/d/1QsQ19xSbsMXjcSa7hzItjOiQnwEoVtwpP3oPfcAp
    </script>
 </body>
 </html> 
-Google sheet
-                                               
-
-function doGet(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Sheet1");
-  var data = sheet.getDataRange().getValues();
-  var headers = data[0];
-  var jsonArray = [];
-  
-  for (var i = 1; i < data.length; i++) {
-    var obj = {};
-    for (var j = 0; j < headers.length; j++) {
-      var val = data[i][j];
-      // 如果是日期對象，轉為 YYYY/MM/DD 格式
-      if (Object.prototype.toString.call(val) === '[object Date]') {
-        val = Utilities.formatDate(val, "GMT+8", "yyyy/MM/dd");
-      }
-      obj[headers[j].toLowerCase()] = val;
-    }
-    jsonArray.push(obj);
-  }
-  
-  return ContentService.createTextOutput(JSON.stringify(jsonArray))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Sheet1");
-  var data = JSON.parse(e.postData.contents);
-  
-  sheet.clearContents();
-  
-  var headers = ["ID", "Telco", "Remains", "Expiry", "Location", "Usage", "Staff", "Date", "Action"];
-  sheet.appendRow(headers);
-  
-  data.forEach(function(row) {
-    sheet.appendRow([
-      row.id,
-      row.telco,
-      row.remains,
-      row.expiry,
-      row.location,
-      row.usage,
-      row.staff,
-      row.date,
-      row.action || "---"
-    ]);
-  });
-  
-  return ContentService.createTextOutput("Success");
-}
